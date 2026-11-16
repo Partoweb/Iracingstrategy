@@ -1,0 +1,13 @@
+# Race settings for `strategist plan --race race.example.toml`.
+# Flags on the command line override what is set here.
+
+minutes = 60            # or: laps = 30
+# tank_l = 100          # default: the tank size logged for the car
+mandatory_stops = 0
+# tire_sets = 4         # sets available, the starting set included
+tire_changes = true
+service = "together"    # "together": fuel and tires at once; "sequential": one after the other
+reserve_laps = 0.5      # fuel in hand at every stop and at the flag
+timed_extra_laps = 1    # timed races: fuel for this many laps beyond the predicted count
+white_flag_lap = false  # timed races: one more lap after the lap that ends the clock
+formation_fuel_l = 0    # litres burned before the green flag
