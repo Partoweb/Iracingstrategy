@@ -6,7 +6,10 @@ the live sim (through pyirsdk) or by the built-in simulator in `sim.py`.
 
 from __future__ import annotations
 
+import contextlib
+import io
 import re
+import sys
 from dataclasses import dataclass
 from typing import Any, Iterable
 
@@ -159,6 +162,9 @@ class IRSDKSource:
     name = "irsdk"
 
     def __init__(self) -> None:
+        if sys.platform != "win32":
+            raise RuntimeError("Live telemetry needs Windows: iRacing shares it through "
+                               "Windows shared memory. Run the logger on the sim PC.")
         try:
             import irsdk  # type: ignore[import-not-found]
         except ImportError as exc:  # pragma: no cover - depends on the platform
@@ -176,10 +182,10 @@ class IRSDKSource:
             self._connected = False
         if not self._connected:
             try:
-                started = ir.startup()
+                # pyirsdk prints a line on every failed attempt; keep the console clean.
+                with contextlib.redirect_stdout(io.StringIO()):
+                    started = ir.startup()
             except Exception:
-                # startup() needs the Windows shared-memory API; anywhere else
-                # there is no sim to attach to.
                 started = False
             if started and ir.is_initialized and ir.is_connected:
                 self._connected = True
